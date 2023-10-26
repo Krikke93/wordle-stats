@@ -1,22 +1,35 @@
-<div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4" *ngFor="let year of years">
-  <div class="col" *ngFor="let monthStructure of year.structure; index as monthIndex">
-    <div class="card">
-      <div class="card-header">{{ monthStructure.name }}</div>
-      <div class="card-body">
-        <table class="table table-bordered" *ngFor="let week of year.overview[monthIndex]">
-          <thead>
-            <tr>
-              <th scope="col"></th>
-              <th *ngFor="let dayName of dayNames" class="day-header" scope="col">{{ dayName }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let playerName of playerNames; index as playerIndex">
-              <th class="name-header" scope="row">{{ playerName }}</th>
-              <td [ngClass]="{ 'bg-light': day === null }" *ngFor="let day of week">{{ day === null ? '' : day[playerIndex] }}</td>
-            </tr>
-          </tbody>
-        </table>
+<div class="card" *ngFor="let year of years; index as yearIndex">
+  <div class="card-header year-header" (click)="years[yearIndex].collapsed = !year.collapsed">
+    <h4>{{ year.year }}</h4>
+  </div>
+  <div class="card-body" *ngIf="year.collapsed">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+      <div class="col" *ngFor="let monthStructure of year.structure; index as monthIndex">
+        <div class="card">
+          <div class="card-header">{{ monthStructure.name }}</div>
+          <div class="card-body">
+            <table class="table table-bordered" *ngFor="let week of year.overview[monthIndex]; index as weekIndex; last as isLastWeek">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th *ngFor="let dayName of dayNames" class="day-header" scope="col">{{ dayName }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let playerName of playerNames; index as playerIndex">
+                  <th class="name-header" scope="row">{{ playerName }}</th>
+                  <td *ngFor="let day of week; index as dayIndex" [ngClass]="{
+                    'bg-light': day === null,
+                    'start-cell': weekIndex === 0 && year.startDays[monthIndex] === dayIndex,
+                    'end-cell': isLastWeek && year.endDays[monthIndex] === dayIndex
+                  }">
+                    {{ day === null ? '' : day[playerIndex] }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>

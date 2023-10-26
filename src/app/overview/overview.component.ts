@@ -14,6 +14,9 @@ export class OverviewComponent implements OnInit {
     structure: YearStructure,
     data: YearData,
     overview: (number[] | null)[][][],
+    startDays: number[],
+    endDays: number[],
+    collapsed: boolean,
   }[] = [];
 
   dayNames = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
@@ -23,6 +26,8 @@ export class OverviewComponent implements OnInit {
     let firstDay = environment.firstDay;
     this.years = Object.entries(environment.data).map(([year, data]) => {
       const months: (number[] | null)[][][] = [];
+      const startDays: number[] = [];
+      const endDays: number[] = [];
       data.months.forEach((monthData: (number[] | null)[]) => {
         const weeks: (number[] | null)[][] = [];
         let currentWeek: (number[] | null)[] = [];
@@ -56,6 +61,8 @@ export class OverviewComponent implements OnInit {
             currentWeek = [];
           }
         });
+        startDays.push(firstDay);
+        endDays.push(lastDay === 0 ? 6 : lastDay - 1);
         firstDay = lastDay;
         months.push(weeks);
       });
@@ -64,6 +71,9 @@ export class OverviewComponent implements OnInit {
         structure: data.leap ? LEAP_YEAR_STRUCTURE : YEAR_STRUCTURE,
         data,
         overview: months,
+        startDays,
+        endDays,
+        collapsed: false,
       };
     });
   }
